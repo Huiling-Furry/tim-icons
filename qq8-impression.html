@@ -1,0 +1,2021 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>QQ 8 · 印象</title>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        background: #e8ecf1;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .phone {
+        width: 100%;
+        max-width: 390px;
+        background: #ffffff;
+        border-radius: 36px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 800px;
+        position: relative;
+    }
+
+    /* ========== 通用顶栏 ========== */
+    .top-bar {
+        padding: 14px 18px 6px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff;
+        flex-shrink: 0;
+        min-height: 54px;
+        position: relative;
+        z-index: 10;
+    }
+
+    .avatar {
+        width: 34px;
+        height: 34px;
+        background: linear-gradient(135deg, #5b8def, #3a6fd8);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.15s;
+        flex-shrink: 0;
+        position: relative;
+        user-select: none;
+        overflow: hidden;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar:active { transform: scale(0.92); }
+    .avatar .status-dot {
+        position: absolute;
+        bottom: -1px;
+        right: -1px;
+        width: 11px;
+        height: 11px;
+        border-radius: 50%;
+        border: 2px solid #fff;
+        background: #34c759;
+        transition: 0.2s;
+    }
+    .avatar .status-dot.busy { background: #ff9f0a; }
+    .avatar .status-dot.hidden { background: #8e8e93; }
+    .avatar .status-dot.qme { background: #5b8def; }
+
+    .top-title {
+        font-size: 17px;
+        font-weight: 600;
+        color: #1a1a1a;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .top-title .back-btn {
+        font-size: 20px;
+        cursor: pointer;
+        padding: 4px 8px 4px 0;
+        color: #333;
+        display: none;
+    }
+    .top-title .back-btn:active { opacity: 0.5; }
+
+    .top-icons {
+        display: flex;
+        gap: 16px;
+        color: #555;
+        font-size: 22px;
+        align-items: center;
+    }
+    .top-icons span { cursor: pointer; transition: 0.15s; }
+    .top-icons span:active { transform: scale(0.88); opacity: 0.6; }
+
+    /* ========== 图标通用 ========== */
+    .icon-img {
+        width: 1em;
+        height: 1em;
+        object-fit: contain;
+        vertical-align: middle;
+        display: inline-block;
+    }
+
+    /* ========== 页面容器 ========== */
+    .pages {
+        flex: 1;
+        overflow: hidden;
+        position: relative;
+        display: flex;
+    }
+
+    .page {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+        background: #fff;
+        will-change: transform;
+    }
+
+    .page-msg, .page-contact, .page-dynamic {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(30px);
+    }
+    .page-msg.active, .page-contact.active, .page-dynamic.active {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateX(0);
+    }
+
+    /* 聊天页（覆盖式） */
+    .page-chat {
+        transform: translateX(100%);
+        opacity: 1;
+        pointer-events: none;
+        z-index: 20;
+        background: #f2f4f7;
+    }
+    .page-chat.active {
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    /* ========== 侧边栏主页：全屏覆盖层，压过底部导航 ========== */
+    .sidebar-page {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(180deg, #eef3fa 0%, #f7f9fc 40%, #ffffff 100%);
+        z-index: 100;
+        transform: translateX(-100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        display: flex;
+        flex-direction: column;
+        pointer-events: none;
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.08);
+    }
+    .sidebar-page.active {
+        transform: translateX(0);
+        pointer-events: auto;
+    }
+
+    .sidebar-top {
+        padding: 18px 20px 10px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+    }
+
+    .sidebar-close {
+        font-size: 22px;
+        color: #666;
+        cursor: pointer;
+        padding: 4px 8px;
+        transition: 0.15s;
+    }
+    .sidebar-close:active { opacity: 0.5; transform: scale(0.9); }
+
+    .sidebar-profile {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 6px 20px 18px;
+        flex-shrink: 0;
+    }
+
+    .sidebar-avatar-lg {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #5b8def, #3a6fd8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 26px;
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(91, 141, 239, 0.3);
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+    }
+    .sidebar-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+    .sidebar-avatar-lg .status-dot-lg {
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        border: 3px solid #fff;
+        background: #34c759;
+        transition: 0.2s;
+        z-index: 1;
+    }
+
+    .sidebar-info { flex: 1; min-width: 0; }
+    .sidebar-name {
+        font-size: 19px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 4px;
+    }
+    .sidebar-qq {
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 6px;
+    }
+    .sidebar-status-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        color: #5b8def;
+        background: #e8f0fe;
+        padding: 4px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: 0.15s;
+        user-select: none;
+    }
+    .sidebar-status-pill:active { transform: scale(0.95); }
+
+    .sidebar-status-card {
+        margin: 0 20px 16px;
+        background: #ffffff;
+        border-radius: 18px;
+        padding: 14px 16px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        border: 1px solid #eef2f7;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        transition: 0.15s;
+        flex-shrink: 0;
+    }
+    .sidebar-status-card:active { transform: scale(0.98); }
+    .sidebar-status-card .sc-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .sidebar-status-card .sc-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: #f0f5ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        overflow: hidden;
+    }
+    .sidebar-status-card .sc-icon img { width: 26px; height: 26px; object-fit: contain; }
+    .sidebar-status-card .sc-text { font-size: 13px; color: #555; }
+    .sidebar-status-card .sc-text strong {
+        display: block;
+        font-size: 14px;
+        color: #1a1a1a;
+        margin-bottom: 2px;
+    }
+    .sidebar-status-card .sc-arrow { color: #ccc; font-size: 16px; }
+
+    .sidebar-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin: 0 20px 16px;
+        background: #fff;
+        border-radius: 18px;
+        padding: 16px 10px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        border: 1px solid #eef2f7;
+        flex-shrink: 0;
+    }
+
+    .sg-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        color: #555;
+        cursor: pointer;
+        padding: 4px 0;
+        border-radius: 10px;
+        transition: 0.15s;
+        user-select: none;
+    }
+    .sg-item:active { background: #f5f7fa; transform: scale(0.96); }
+    .sg-icon { width: 26px; height: 26px; object-fit: contain; display: block; }
+
+    .sidebar-video-section {
+        margin: 0 20px;
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 20px;
+    }
+    .sidebar-video-section::-webkit-scrollbar { display: none; }
+    .sidebar-video-section { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .sv-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .sv-title span:last-child {
+        font-size: 11px;
+        color: #999;
+        font-weight: 400;
+    }
+
+    .video-card {
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f0f2f5;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+    .video-card:active { transform: scale(0.98); }
+    .video-thumb {
+        height: 130px;
+        background: linear-gradient(135deg, #d5e3ff, #b8d0f5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .video-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .video-thumb .thumb-emoji {
+        font-size: 40px;
+    }
+    .video-thumb .play-badge {
+        position: absolute;
+        bottom: 8px;
+        right: 10px;
+        background: rgba(0,0,0,0.5);
+        color: #fff;
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        backdrop-filter: blur(4px);
+    }
+    .video-meta {
+        padding: 10px 12px;
+        font-size: 13px;
+        color: #333;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .video-meta span:last-child { font-size: 11px; color: #aaa; }
+
+    /* ========== 长按状态面板 ========== */
+    .status-sheet-mask {
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: rgba(0, 0, 0, 0.35);
+        z-index: 200;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s;
+    }
+    .status-sheet-mask.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .status-sheet {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        background: #ffffff;
+        border-radius: 24px 24px 0 0;
+        z-index: 201;
+        transform: translateY(100%);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding: 8px 20px 28px;
+        pointer-events: none;
+    }
+    .status-sheet.show {
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    .sheet-handle {
+        width: 36px;
+        height: 4px;
+        background: #e0e0e0;
+        border-radius: 2px;
+        margin: 8px auto 14px;
+    }
+
+    .sheet-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 14px;
+        text-align: center;
+    }
+
+    .status-option {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 13px 12px;
+        border-radius: 14px;
+        cursor: pointer;
+        transition: 0.15s;
+        user-select: none;
+    }
+    .status-option:active { background: #f5f7fa; transform: scale(0.98); }
+    .status-option.selected { background: #eef4ff; }
+
+    .status-option .so-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    .status-option .so-icon img { width: 24px; height: 24px; object-fit: contain; }
+    .so-online .so-icon { background: #e6f9ec; }
+    .so-qme .so-icon { background: #e8f0fe; }
+    .so-busy .so-icon { background: #fff4e5; }
+    .so-hidden .so-icon { background: #f0f0f2; }
+
+    .status-option .so-text { flex: 1; min-width: 0; }
+    .status-option .so-text strong {
+        display: block;
+        font-size: 14px;
+        color: #1a1a1a;
+        margin-bottom: 2px;
+    }
+    .status-option .so-text small { font-size: 11px; color: #999; }
+    .status-option .so-check {
+        color: #5b8def;
+        font-size: 16px;
+        opacity: 0;
+        transition: 0.15s;
+    }
+    .status-option.selected .so-check { opacity: 1; }
+
+    /* ========== 搜索 ========== */
+    .search-bar {
+        margin: 4px 18px 10px;
+        background: #f0f2f5;
+        border-radius: 20px;
+        padding: 9px 14px;
+        font-size: 14px;
+        color: #999;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+    .search-bar .search-icon {
+        width: 16px;
+        height: 16px;
+        object-fit: contain;
+        opacity: 0.6;
+        flex-shrink: 0;
+    }
+    .search-bar input {
+        border: none;
+        background: transparent;
+        outline: none;
+        font-size: 14px;
+        flex: 1;
+        color: #333;
+        min-width: 0;
+    }
+    .search-bar input::placeholder { color: #aaa; }
+
+    /* 滚动区 */
+    .scroll-area {
+        flex: 1;
+        overflow-y: auto;
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+    .scroll-area { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ========== 消息列表 ========== */
+    .msg-list {
+        padding: 0 18px 10px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .msg-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px solid #f2f2f2;
+        cursor: pointer;
+        transition: background 0.15s;
+        border-radius: 10px;
+        position: relative;
+    }
+    .msg-item:active { background: #f5f7fa; }
+
+    .msg-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        flex-shrink: 0;
+        color: white;
+        font-weight: 500;
+        position: relative;
+        overflow: hidden;
+    }
+    .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .a1 { background: linear-gradient(135deg, #7eb8f0, #4a8fd4); }
+    .a2 { background: linear-gradient(135deg, #f0a87e, #d47a4a); }
+    .a3 { background: linear-gradient(135deg, #a8e6c3, #4ab87a); }
+    .a4 { background: linear-gradient(135deg, #d4a8f0, #9a4ad4); }
+    .a5 { background: linear-gradient(135deg, #f0d47e, #d4b04a); }
+
+    .msg-content { flex: 1; min-width: 0; }
+
+    .msg-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 3px;
+    }
+
+    .msg-name {
+        font-size: 15px;
+        font-weight: 500;
+        color: #1a1a1a;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .msg-time {
+        font-size: 11px;
+        color: #bbb;
+        flex-shrink: 0;
+        margin-left: 8px;
+    }
+
+    .msg-preview {
+        font-size: 13px;
+        color: #999;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .badge {
+        background: #ff4d4f;
+        color: white;
+        font-size: 11px;
+        min-width: 18px;
+        height: 18px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 5px;
+        flex-shrink: 0;
+        font-weight: 500;
+    }
+
+    .online-dot {
+        width: 8px;
+        height: 8px;
+        background: #34c759;
+        border-radius: 50%;
+        display: inline-block;
+        vertical-align: middle;
+        flex-shrink: 0;
+    }
+
+    .relation-row {
+        display: flex;
+        gap: 8px;
+        margin: 2px 18px 8px;
+        flex-wrap: wrap;
+        flex-shrink: 0;
+    }
+
+    .relation-item {
+        font-size: 12px;
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 6px 12px;
+        border: 1px solid #eef0f4;
+        color: #555;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+        transition: 0.15s;
+    }
+    .relation-item:active { transform: scale(0.95); background: #f5f7fa; }
+    .relation-item img { width: 14px; height: 14px; object-fit: contain; }
+
+    /* ========== 联系人页 ========== */
+    .contact-group { margin-bottom: 2px; }
+
+    .group-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #666;
+        cursor: pointer;
+        user-select: none;
+        transition: background 0.15s;
+    }
+    .group-header:active { background: #f5f7fa; }
+
+    .group-header .group-left {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .group-header .group-left img {
+        width: 16px;
+        height: 16px;
+        object-fit: contain;
+    }
+
+    .group-header .arrow {
+        font-size: 11px;
+        color: #bbb;
+        transition: transform 0.2s;
+    }
+    .group-header.collapsed .arrow { transform: rotate(-90deg); }
+
+    .group-members {
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+    }
+
+    .member-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 9px 18px 9px 24px;
+        cursor: pointer;
+        transition: background 0.15s;
+    }
+    .member-item:active { background: #f5f7fa; }
+
+    .member-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 15px;
+        font-weight: 500;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    .member-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .member-info { flex: 1; min-width: 0; }
+
+    .member-name {
+        font-size: 14px;
+        color: #222;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .member-sign {
+        font-size: 12px;
+        color: #aaa;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-top: 2px;
+    }
+
+    /* ========== 动态页 ========== */
+    .dynamic-feed {
+        padding: 4px 18px 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    .post-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 14px 16px;
+        border: 1px solid #f0f2f5;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+
+    .post-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .post-avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 15px;
+        font-weight: 500;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    .post-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .post-user { font-size: 14px; font-weight: 500; color: #222; }
+    .post-time { font-size: 11px; color: #bbb; margin-top: 2px; }
+
+    .post-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.55;
+        margin-bottom: 10px;
+        word-break: break-word;
+    }
+
+    .post-image {
+        background: linear-gradient(135deg, #e0ecff, #c5dcff);
+        border-radius: 12px;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+    .post-image img { width: 100%; height: 100%; object-fit: cover; }
+
+    .post-actions {
+        display: flex;
+        gap: 22px;
+        font-size: 13px;
+        color: #888;
+        padding-top: 8px;
+        border-top: 1px solid #f4f5f7;
+    }
+
+    .post-action {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: 0.15s;
+        user-select: none;
+    }
+    .post-action img { width: 14px; height: 14px; object-fit: contain; opacity: 0.7; }
+    .post-action:active { opacity: 0.5; }
+    .post-action.liked { color: #ff4d4f; }
+
+    .dyn-tabs {
+        display: flex;
+        gap: 6px;
+        padding: 6px 18px 12px;
+        flex-shrink: 0;
+    }
+    .dyn-tab {
+        font-size: 13px;
+        padding: 6px 14px;
+        border-radius: 16px;
+        background: #f2f4f7;
+        color: #666;
+        cursor: pointer;
+        transition: 0.15s;
+        user-select: none;
+    }
+    .dyn-tab.active { background: #5b8def; color: #fff; font-weight: 500; }
+    .dyn-tab:active { transform: scale(0.95); }
+
+    /* ========== 聊天页 ========== */
+    .chat-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 12px 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+    .chat-body::-webkit-scrollbar { display: none; }
+    .chat-body { -ms-overflow-style: none; scrollbar-width: none; }
+
+    .chat-msg {
+        display: flex;
+        gap: 10px;
+        max-width: 82%;
+        animation: msgIn 0.25s ease;
+    }
+    @keyframes msgIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-msg.self { align-self: flex-end; flex-direction: row-reverse; }
+
+    .chat-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        font-weight: 500;
+        flex-shrink: 0;
+        overflow: hidden;
+    }
+    .chat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .chat-bubble {
+        background: #fff;
+        border-radius: 4px 16px 16px 16px;
+        padding: 10px 14px;
+        font-size: 14px;
+        line-height: 1.5;
+        color: #222;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        word-break: break-word;
+        position: relative;
+    }
+
+    .chat-msg.self .chat-bubble {
+        background: #5b8def;
+        color: #fff;
+        border-radius: 16px 4px 16px 16px;
+    }
+
+    .voice-msg { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+
+    .voice-play {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: rgba(0,0,0,0.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: 0.15s;
+    }
+    .chat-msg.self .voice-play { background: rgba(255,255,255,0.25); }
+    .voice-play:active { transform: scale(0.88); }
+    .voice-play.playing { animation: voicePulse 0.7s infinite alternate; }
+    @keyframes voicePulse {
+        from { box-shadow: 0 0 0 0 rgba(91,141,239,0.4); }
+        to { box-shadow: 0 0 0 6px rgba(91,141,239,0); }
+    }
+
+    .voice-wave { flex: 1; height: 20px; display: flex; align-items: center; gap: 2px; }
+    .voice-bar {
+        flex: 1;
+        background: #c5d5ee;
+        border-radius: 2px;
+        height: 30%;
+        transition: height 0.2s;
+    }
+    .chat-msg.self .voice-bar { background: rgba(255,255,255,0.55); }
+    .voice-wave.playing .voice-bar { animation: waveJump 0.6s infinite alternate; }
+    .voice-wave.playing .voice-bar:nth-child(1) { animation-delay: 0s; }
+    .voice-wave.playing .voice-bar:nth-child(2) { animation-delay: 0.1s; }
+    .voice-wave.playing .voice-bar:nth-child(3) { animation-delay: 0.2s; }
+    .voice-wave.playing .voice-bar:nth-child(4) { animation-delay: 0.3s; }
+    .voice-wave.playing .voice-bar:nth-child(5) { animation-delay: 0.4s; }
+    .voice-wave.playing .voice-bar:nth-child(6) { animation-delay: 0.5s; }
+
+    @keyframes waveJump {
+        from { height: 20%; }
+        to { height: 85%; }
+    }
+
+    .voice-duration { font-size: 12px; opacity: 0.65; flex-shrink: 0; }
+
+    .super-emoji {
+        font-size: 64px;
+        line-height: 1;
+        animation: emojiPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: inline-block;
+    }
+    @keyframes emojiPop {
+        from { transform: scale(0.3); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+
+    .chat-input-bar {
+        background: #fff;
+        border-top: 1px solid #f0f0f0;
+        padding: 10px 14px 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .chat-input {
+        flex: 1;
+        background: #f2f4f7;
+        border-radius: 20px;
+        padding: 9px 16px;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        color: #333;
+        min-width: 0;
+    }
+    .chat-input::placeholder { color: #aaa; }
+
+    .send-btn {
+        background: #5b8def;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 9px 18px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: 0.15s;
+        flex-shrink: 0;
+    }
+    .send-btn:active { transform: scale(0.94); opacity: 0.85; }
+
+    .emoji-btn {
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: 0.15s;
+        user-select: none;
+        display: flex;
+        align-items: center;
+    }
+    .emoji-btn img { width: 26px; height: 26px; object-fit: contain; }
+    .emoji-btn:active { transform: scale(0.85); }
+
+    /* ========== 底部导航 ========== */
+    .bottom-nav {
+        background: #ffffff;
+        border-top: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-around;
+        padding: 8px 0 20px;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 5;
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 3px;
+        font-size: 10px;
+        color: #999;
+        cursor: pointer;
+        transition: 0.15s;
+        flex: 1;
+        position: relative;
+    }
+    .nav-item:active { opacity: 0.6; }
+    .nav-item.active { color: #5b8def; }
+
+    .nav-icon { font-size: 22px; line-height: 1; position: relative; display: inline-flex; align-items: center; justify-content: center; }
+    .nav-icon img { width: 24px; height: 24px; object-fit: contain; }
+    .nav-item.active .nav-icon img { filter: brightness(0) saturate(100%) invert(42%) sepia(80%) saturate(2000%) hue-rotate(210deg); }
+
+    .nav-badge-wrap { position: relative; display: inline-block; }
+
+    .nav-badge {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background: #ff4d4f;
+        color: white;
+        font-size: 9px;
+        min-width: 16px;
+        height: 16px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0 4px;
+        font-weight: 600;
+        transition: 0.15s;
+    }
+    .nav-badge.hide { display: none; }
+
+    .home-bar {
+        width: 130px;
+        height: 5px;
+        background: #1a1a1a;
+        border-radius: 10px;
+        margin: 0 auto 8px;
+        opacity: 0.15;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 5;
+    }
+
+    .empty-tip {
+        text-align: center;
+        padding: 40px 20px;
+        color: #bbb;
+        font-size: 13px;
+    }
+
+    /* 头像点击弹层 */
+    .profile-pop {
+        position: absolute;
+        top: 54px;
+        left: 18px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        padding: 16px 20px;
+        z-index: 50;
+        width: 200px;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px) scale(0.95);
+        transition: 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .profile-pop.show {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0) scale(1);
+    }
+    .profile-pop .p-name { font-size: 15px; font-weight: 600; color: #222; margin-bottom: 4px; }
+    .profile-pop .p-qq { font-size: 12px; color: #999; margin-bottom: 10px; }
+    .profile-pop .p-status { font-size: 12px; color: #34c759; display: flex; align-items: center; gap: 5px; }
+</style>
+</head>
+<body>
+
+<div class="phone" id="app">
+
+    <!-- 通用顶栏 -->
+    <div class="top-bar">
+        <div class="avatar" id="mainAvatar" onclick="handleAvatarClick()">
+            <img id="mainAvatarImg" alt="头像" onerror="this.style.display='none';this.parentNode.insertBefore(document.createTextNode('Q'),this.parentNode.firstChild)">
+            <span class="status-dot" id="avatarStatusDot"></span>
+        </div>
+        <div class="top-title" id="topTitle">消息</div>
+        <div class="top-icons" id="topIcons">
+            <span onclick="showToast('搜索功能开发中')" id="iconSearch"></span>
+            <span onclick="showToast('添加好友 / 扫一扫')" id="iconAdd"></span>
+        </div>
+    </div>
+
+    <!-- 头像点击弹层 -->
+    <div class="profile-pop" id="profilePop">
+        <div class="p-name">Q 用户</div>
+        <div class="p-qq">QQ: 123456789</div>
+        <div class="p-status" id="profilePopStatus">● 在线 · 手机在线</div>
+    </div>
+
+    <!-- 页面容器 -->
+    <div class="pages">
+
+        <!-- 消息页 -->
+        <div class="page page-msg active" id="pageMsg">
+            <div class="search-bar">
+                <img class="search-icon" id="searchIconMsg" alt="" onerror="this.style.display='none'">
+                <input type="text" placeholder="搜索" id="searchInput" oninput="filterMessages()">
+            </div>
+            <div class="relation-row" id="relationRow"></div>
+            <div class="scroll-area">
+                <div class="msg-list" id="msgList"></div>
+            </div>
+        </div>
+
+        <!-- 联系人页 -->
+        <div class="page page-contact" id="pageContact">
+            <div class="search-bar">
+                <img class="search-icon" id="searchIconContact" alt="" onerror="this.style.display='none'">
+                <input type="text" placeholder="搜索联系人" oninput="filterContacts(this.value)">
+            </div>
+            <div class="scroll-area" id="contactScroll"></div>
+        </div>
+
+        <!-- 动态页 -->
+        <div class="page page-dynamic" id="pageDynamic">
+            <div class="dyn-tabs">
+                <div class="dyn-tab active" onclick="switchDynTab(this)">好友动态</div>
+                <div class="dyn-tab" onclick="switchDynTab(this)">频道</div>
+                <div class="dyn-tab" onclick="switchDynTab(this)">小世界</div>
+            </div>
+            <div class="scroll-area">
+                <div class="dynamic-feed" id="dynamicFeed"></div>
+            </div>
+        </div>
+
+        <!-- 聊天页 -->
+        <div class="page page-chat" id="pageChat">
+            <div class="chat-body" id="chatBody"></div>
+            <div class="chat-input-bar">
+                <span class="emoji-btn" onclick="sendSuperEmoji()" id="iconEmoji"></span>
+                <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." onkeydown="if(event.key==='Enter')sendMessage()">
+                <button class="send-btn" id="sendBtn" onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+
+        <!-- 侧边栏主页 -->
+        <div class="sidebar-page" id="sidebarPage">
+            <div class="sidebar-top">
+                <div style="font-size:13px;color:#999;font-weight:500;">我的主页</div>
+                <div class="sidebar-close" onclick="closeSidebar()">✕</div>
+            </div>
+
+            <div class="sidebar-profile">
+                <div class="sidebar-avatar-lg">
+                    <img id="sidebarAvatarImg" alt="" onerror="this.style.display='none'">
+                    <span class="status-dot-lg" id="sidebarStatusDot"></span>
+                </div>
+                <div class="sidebar-info">
+                    <div class="sidebar-name">Q 用户</div>
+                    <div class="sidebar-qq">QQ: 123456789</div>
+                    <div class="sidebar-status-pill" id="sidebarStatusPill" onclick="openStatusSheet()">
+                        <span id="sidebarStatusIcon"></span>
+                        <span id="sidebarStatusText">在线</span>
+                        <span style="font-size:10px;opacity:0.6;">▾</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-status-card" onclick="openStatusSheet()">
+                <div class="sc-left">
+                    <div class="sc-icon" id="scIcon"></div>
+                    <div class="sc-text">
+                        <strong id="scStatusTitle">当前状态：在线</strong>
+                        <span id="scStatusDesc">点击切换在线状态</span>
+                    </div>
+                </div>
+                <div class="sc-arrow">›</div>
+            </div>
+
+            <div class="sidebar-grid" id="sidebarGrid"></div>
+
+            <div class="sidebar-video-section">
+                <div class="sv-title">
+                    <span>短视频</span>
+                    <span>8.0 侧边栏主页 · 内容占位</span>
+                </div>
+                <div class="video-card" onclick="showToast('短视频播放')">
+                    <div class="video-thumb">
+                        <img id="videoThumb1" alt="" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<span class=\'thumb-emoji\'>🎬</span>')">
+                        <span class="play-badge">02:15</span>
+                    </div>
+                    <div class="video-meta"><span>死党·阿杰 · 打球日常</span><span>👍 128</span></div>
+                </div>
+                <div class="video-card" onclick="showToast('短视频播放')">
+                    <div class="video-thumb" style="background:linear-gradient(135deg,#ffe0d5,#ffc5b8);">
+                        <img id="videoThumb2" alt="" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<span class=\'thumb-emoji\'>🎮</span>')">
+                        <span class="play-badge">01:08</span>
+                    </div>
+                    <div class="video-meta"><span>王者搭子·小李 · 五杀时刻</span><span>👍 356</span></div>
+                </div>
+                <div class="video-card" onclick="showToast('短视频播放')">
+                    <div class="video-thumb" style="background:linear-gradient(135deg,#d5ffe0,#b8f5c5);">
+                        <img id="videoThumb3" alt="" onerror="this.style.display='none';this.parentNode.insertAdjacentHTML('beforeend','<span class=\'thumb-emoji\'>🍲</span>')">
+                        <span class="play-badge">00:45</span>
+                    </div>
+                    <div class="video-meta"><span>老妈 · 今天做了好吃的</span><span>👍 89</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 底部导航 -->
+    <div class="bottom-nav" id="bottomNav"></div>
+
+    <div class="home-bar"></div>
+
+    <!-- 长按状态面板 -->
+    <div class="status-sheet-mask" id="statusMask" onclick="closeStatusSheet()"></div>
+    <div class="status-sheet" id="statusSheet">
+        <div class="sheet-handle"></div>
+        <div class="sheet-title">切换在线状态</div>
+
+        <div class="status-option so-online selected" data-status="online" onclick="selectStatus('online')">
+            <div class="so-icon" id="soIconOnline"></div>
+            <div class="so-text"><strong>在线</strong><small>好友可以看到你在线</small></div>
+            <div class="so-check">✓</div>
+        </div>
+        <div class="status-option so-qme" data-status="qme" onclick="selectStatus('qme')">
+            <div class="so-icon" id="soIconQme"></div>
+            <div class="so-text"><strong>Q我吧</strong><small>期待被好友打扰</small></div>
+            <div class="so-check">✓</div>
+        </div>
+        <div class="status-option so-busy" data-status="busy" onclick="selectStatus('busy')">
+            <div class="so-icon" id="soIconBusy"></div>
+            <div class="so-text"><strong>忙碌</strong><small>可能无法及时回复</small></div>
+            <div class="so-check">✓</div>
+        </div>
+        <div class="status-option so-hidden" data-status="hidden" onclick="selectStatus('hidden')">
+            <div class="so-icon" id="soIconHidden"></div>
+            <div class="so-text"><strong>隐身</strong><small>好友看不到你在线</small></div>
+            <div class="so-check">✓</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // ==================== tim-icons CDN 映射表 ====================
+    // 基础地址：https://cdn.jsdelivr.net/gh/Huiling-Furry/tim-icons@main/r/{桶}/{文件}.png
+    const CDN_BASE = 'https://cdn.jsdelivr.net/gh/Huiling-Furry/tim-icons@main/r';
+
+    // 根据你的仓库字母分桶规则手动映射（样例 r/aa/a.png 已确认可访问）
+    // 后面你把准确路径发我，只改这里即可
+    const ICONS = {
+        avatar:        `${CDN_BASE}/aa/a.png`,        // 用户头像（样例路径）
+        search:        `${CDN_BASE}/aa/a.png`,        // 搜索
+        add:           `${CDN_BASE}/aa/a.png`,        // 添加
+        emoji:         `${CDN_BASE}/aa/a.png`,        // 表情
+        navMsg:        `${CDN_BASE}/aa/a.png`,        // 消息
+        navContact:    `${CDN_BASE}/aa/a.png`,        // 联系人
+        navDynamic:    `${CDN_BASE}/aa/a.png`,        // 动态
+        statusOnline:  `${CDN_BASE}/aa/a.png`,        // 在线
+        statusQme:     `${CDN_BASE}/aa/a.png`,        // Q我吧
+        statusBusy:    `${CDN_BASE}/aa/a.png`,        // 忙碌
+        statusHidden:  `${CDN_BASE}/aa/a.png`,        // 隐身
+        relationKing:  `${CDN_BASE}/aa/a.png`,        // 王者搭子
+        relationFire:  `${CDN_BASE}/aa/a.png`,        // 闺蜜
+        relationHeart: `${CDN_BASE}/aa/a.png`,        // 情侣
+        relationHand:  `${CDN_BASE}/aa/a.png`,        // 兄弟
+        like:          `${CDN_BASE}/aa/a.png`,        // 点赞
+        comment:       `${CDN_BASE}/aa/a.png`,        // 评论
+        share:         `${CDN_BASE}/aa/a.png`,        // 转发
+        groupFamily:   `${CDN_BASE}/aa/a.png`,        // 家人分组
+        groupFire:     `${CDN_BASE}/aa/a.png`,        // 死党分组
+        groupHeart:    `${CDN_BASE}/aa/a.png`,        // 暗恋分组
+        groupBook:     `${CDN_BASE}/aa/a.png`,        // 同学分组
+        groupGame:     `${CDN_BASE}/aa/a.png`,        // 游戏分组
+        gridSpace:     `${CDN_BASE}/aa/a.png`,        // 空间
+        gridMail:      `${CDN_BASE}/aa/a.png`,        // 邮箱
+        gridWallet:    `${CDN_BASE}/aa/a.png`,        // 钱包
+        gridStar:      `${CDN_BASE}/aa/a.png`,        // 收藏
+        gridFile:      `${CDN_BASE}/aa/a.png`,        // 文件
+        gridGame:      `${CDN_BASE}/aa/a.png`,        // 游戏
+        gridMusic:     `${CDN_BASE}/aa/a.png`,        // 音乐
+        gridSetting:   `${CDN_BASE}/aa/a.png`,        // 设置
+        video1:        `${CDN_BASE}/aa/a.png`,
+        video2:        `${CDN_BASE}/aa/a.png`,
+        video3:        `${CDN_BASE}/aa/a.png`
+    };
+
+    // 生成 <img> 图标，加载失败时回退为 emoji
+    function iconImg(key, emojiFallback, size) {
+        const src = ICONS[key];
+        const style = size ? `style="width:${size}px;height:${size}px"` : '';
+        return `<img class="icon-img" src="${src}" ${style} alt="" onerror="this.style.display='none';this.insertAdjacentText('afterend','${emojiFallback}')">`;
+    }
+
+    // ==================== 数据 ====================
+    const messages = [
+        { id: 1, name: '班级通知群', avatar: '群', avatarClass: 'a1', preview: '[文件] 期末复习资料.pdf 2.3MB', time: '09:42', unread: 3, online: true, type: 'group',
+          chat: [
+            { self: false, text: '大家好，期末复习资料已经上传到群文件了。', time: '09:40' },
+            { self: false, text: '需要的同学自行下载。', time: '09:41' },
+            { self: false, text: '[文件] 期末复习资料.pdf 2.3MB', time: '09:42' }
+          ] },
+        { id: 2, name: '死党·阿杰', avatar: '死', avatarClass: 'a2', preview: '[超级表情] 来了老弟', time: '09:18', unread: 0, online: false, type: 'friend',
+          chat: [
+            { self: false, emoji: '🎉', time: '09:15' },
+            { self: false, text: '来了老弟', time: '09:18' }
+          ] },
+        { id: 3, name: 'QQ农场互助群', avatar: '农', avatarClass: 'a3', preview: '帮我浇浇水，秒回', time: '昨天', unread: 0, online: false, type: 'group',
+          chat: [
+            { self: false, text: '帮我浇浇水，秒回', time: '昨天 21:10' },
+            { self: true, text: '浇了', time: '昨天 21:12' }
+          ] },
+        { id: 4, name: '王者搭子·小李', avatar: '王', avatarClass: 'a4', preview: '[亲密关系] 默契值 +10', time: '昨天', unread: 0, online: true, type: 'friend',
+          chat: [
+            { self: false, text: '上号不？', time: '昨天 19:00' },
+            { self: true, text: '来', time: '昨天 19:02' },
+            { self: false, text: '[亲密关系] 默契值 +10', time: '昨天 19:30' }
+          ] },
+        { id: 5, name: '老妈', avatar: '妈', avatarClass: 'a5', preview: '晚上回家吃饭吗', time: '昨天', unread: 1, online: false, type: 'friend',
+          chat: [ { self: false, text: '晚上回家吃饭吗', time: '昨天 17:20' } ] }
+    ];
+
+    const contacts = [
+        { group: '家人', emoji: '👪', iconKey: 'groupFamily', members: [
+            { name: '老妈', sign: '开心每一天', avatar: '妈', avatarClass: 'a5' },
+            { name: '老爸', sign: '钓鱼去了', avatar: '爸', avatarClass: 'a1' },
+            { name: '姐姐', sign: '努力减肥中', avatar: '姐', avatarClass: 'a4' }
+        ] },
+        { group: '死党', emoji: '🔥', iconKey: 'groupFire', members: [
+            { name: '死党·阿杰', sign: '来了老弟', avatar: '死', avatarClass: 'a2' },
+            { name: '小王', sign: '今晚吃鸡', avatar: '王', avatarClass: 'a3' },
+            { name: '阿凯', sign: '别催，在路上了', avatar: '凯', avatarClass: 'a4' }
+        ] },
+        { group: '暗恋', emoji: '💗', iconKey: 'groupHeart', members: [
+            { name: '秘密', sign: '隐身对其可见', avatar: '秘', avatarClass: 'a2' }
+        ] },
+        { group: '同学', emoji: '📚', iconKey: 'groupBook', members: [
+            { name: '班长', sign: '有事请留言', avatar: '班', avatarClass: 'a1' },
+            { name: '学委', sign: '作业记得交', avatar: '学', avatarClass: 'a3' },
+            { name: '同桌', sign: '我是学霸', avatar: '同', avatarClass: 'a4' }
+        ] },
+        { group: '游戏公会', emoji: '🎮', iconKey: 'groupGame', members: [
+            { name: '会长', sign: '公会战报名', avatar: '会', avatarClass: 'a2' },
+            { name: '王者搭子·小李', sign: '默契值 +10', avatar: '王', avatarClass: 'a4' }
+        ] }
+    ];
+
+    const dynamics = [
+        { user: '死党·阿杰', avatar: '死', avatarClass: 'a2', time: '5分钟前', text: '今天天气真好，出来打球啊！', image: '🏀', likes: 12, comments: 3, liked: false },
+        { user: '王者搭子·小李', avatar: '王', avatarClass: 'a4', time: '20分钟前', text: '昨晚五杀截图，还有谁！', image: '🎮', likes: 28, comments: 8, liked: false },
+        { user: '同学·班长', avatar: '班', avatarClass: 'a1', time: '1小时前', text: '期末考试安排已经出来了，大家注意查看群文件。', image: '📚', likes: 5, comments: 1, liked: false },
+        { user: '老妈', avatar: '妈', avatarClass: 'a5', time: '3小时前', text: '今天做了一桌子菜，可惜你不在家。', image: '🍲', likes: 18, comments: 2, liked: false }
+    ];
+
+    const relations = [
+        { key: 'relationKing', emoji: '👑', label: '王者搭子' },
+        { key: 'relationFire', emoji: '🔥', label: '闺蜜' },
+        { key: 'relationHeart', emoji: '💗', label: '情侣' },
+        { key: 'relationHand', emoji: '🤝', label: '兄弟' }
+    ];
+
+    const sidebarGridItems = [
+        { key: 'gridSpace', emoji: '📸', label: '空间', toast: 'QQ 空间' },
+        { key: 'gridMail', emoji: '📁', label: '邮箱', toast: 'QQ 邮箱' },
+        { key: 'gridWallet', emoji: '💰', label: '钱包', toast: 'QQ 钱包' },
+        { key: 'gridStar', emoji: '⭐', label: '收藏', toast: 'QQ 收藏' },
+        { key: 'gridFile', emoji: '📄', label: '文件', toast: 'QQ 文件' },
+        { key: 'gridGame', emoji: '🎮', label: '游戏', toast: 'QQ 游戏' },
+        { key: 'gridMusic', emoji: '🎵', label: '音乐', toast: 'QQ 音乐' },
+        { key: 'gridSetting', emoji: '⚙️', label: '设置', toast: '设置' }
+    ];
+
+    // ==================== 状态 ====================
+    let currentTab = 'msg';
+    let currentChatId = null;
+    let collapsedGroups = {};
+    let chatHistories = {};
+    let currentStatus = 'online';
+    let longPressTimer = null;
+    let longPressTriggered = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let sidebarOpen = false;
+
+    const statusMap = {
+        online: { iconKey: 'statusOnline', emoji: '🟢', text: '在线', desc: '好友可以看到你在线', color: '#34c759' },
+        qme:    { iconKey: 'statusQme',    emoji: '🔵', text: 'Q我吧', desc: '期待被好友打扰', color: '#5b8def' },
+        busy:   { iconKey: 'statusBusy',   emoji: '🟠', text: '忙碌', desc: '可能无法及时回复', color: '#ff9f0a' },
+        hidden: { iconKey: 'statusHidden', emoji: '⚪', text: '隐身', desc: '好友看不到你在线', color: '#8e8e93' }
+    };
+
+    // ==================== 初始化 ====================
+    function init() {
+        injectStaticIcons();
+        renderMessages();
+        renderContacts();
+        renderDynamics();
+        renderRelations();
+        renderSidebarGrid();
+        renderBottomNav();
+        updateNavBadge();
+        updateStatusUI();
+
+        messages.forEach(m => { chatHistories[m.id] = JSON.parse(JSON.stringify(m.chat || [])); });
+        bindAvatarLongPress();
+    }
+
+    // ==================== 注入静态图标 ====================
+    function injectStaticIcons() {
+        // 顶栏头像
+        document.getElementById('mainAvatarImg').src = ICONS.avatar;
+        // 侧边栏头像
+        document.getElementById('sidebarAvatarImg').src = ICONS.avatar;
+        // 顶栏图标
+        document.getElementById('iconSearch').innerHTML = iconImg('search', '🔍', 22);
+        document.getElementById('iconAdd').innerHTML = iconImg('add', '＋', 22);
+        // 搜索栏图标
+        document.getElementById('searchIconMsg').src = ICONS.search;
+        document.getElementById('searchIconContact').src = ICONS.search;
+        // 聊天表情按钮
+        document.getElementById('iconEmoji').innerHTML = iconImg('emoji', '😀', 26);
+        // 状态选项图标
+        document.getElementById('soIconOnline').innerHTML = iconImg('statusOnline', '🟢', 24);
+        document.getElementById('soIconQme').innerHTML = iconImg('statusQme', '🔵', 24);
+        document.getElementById('soIconBusy').innerHTML = iconImg('statusBusy', '🟠', 24);
+        document.getElementById('soIconHidden').innerHTML = iconImg('statusHidden', '⚪', 24);
+        // 侧边栏视频缩略图
+        document.getElementById('videoThumb1').src = ICONS.video1;
+        document.getElementById('videoThumb2').src = ICONS.video2;
+        document.getElementById('videoThumb3').src = ICONS.video3;
+    }
+
+    // ==================== 头像交互：点击 / 长按 ====================
+    function bindAvatarLongPress() {
+        const avatar = document.getElementById('mainAvatar');
+
+        const startPress = () => {
+            longPressTriggered = false;
+            longPressTimer = setTimeout(() => {
+                longPressTriggered = true;
+                openStatusSheet();
+                if (navigator.vibrate) navigator.vibrate(30);
+            }, 500);
+        };
+
+        const cancelPress = () => {
+            if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+        };
+
+        avatar.addEventListener('mousedown', startPress);
+        avatar.addEventListener('mouseup', cancelPress);
+        avatar.addEventListener('mouseleave', cancelPress);
+        avatar.addEventListener('touchstart', startPress, { passive: true });
+        avatar.addEventListener('touchend', cancelPress);
+        avatar.addEventListener('touchcancel', cancelPress);
+        avatar.addEventListener('touchmove', cancelPress, { passive: true });
+    }
+
+    function handleAvatarClick() {
+        if (longPressTriggered) { longPressTriggered = false; return; }
+        toggleProfile();
+    }
+
+    // ==================== 侧边栏主页 ====================
+    function openSidebar() {
+        sidebarOpen = true;
+        document.getElementById('sidebarPage').classList.add('active');
+        document.getElementById('profilePop').classList.remove('show');
+    }
+
+    function closeSidebar() {
+        sidebarOpen = false;
+        document.getElementById('sidebarPage').classList.remove('active');
+    }
+
+    function bindSidebarGesture() {
+        const msgPage = document.getElementById('pageMsg');
+
+        msgPage.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        msgPage.addEventListener('touchend', (e) => {
+            if (sidebarOpen) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (touchStartX < 60 && dx > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) openSidebar();
+        }, { passive: true });
+
+        let mouseStartX = 0;
+        msgPage.addEventListener('mousedown', (e) => { mouseStartX = e.clientX; });
+        msgPage.addEventListener('mouseup', (e) => {
+            if (sidebarOpen) return;
+            const dx = e.clientX - mouseStartX;
+            if (mouseStartX < 60 && dx > 80) openSidebar();
+        });
+    }
+
+    // ==================== 状态面板 ====================
+    function openStatusSheet() {
+        document.getElementById('statusMask').classList.add('show');
+        document.getElementById('statusSheet').classList.add('show');
+        document.getElementById('profilePop').classList.remove('show');
+        document.querySelectorAll('.status-option').forEach(el => {
+            el.classList.toggle('selected', el.dataset.status === currentStatus);
+        });
+    }
+
+    function closeStatusSheet() {
+        document.getElementById('statusMask').classList.remove('show');
+        document.getElementById('statusSheet').classList.remove('show');
+    }
+
+    function selectStatus(status) {
+        currentStatus = status;
+        updateStatusUI();
+        document.querySelectorAll('.status-option').forEach(el => {
+            el.classList.toggle('selected', el.dataset.status === status);
+        });
+        setTimeout(closeStatusSheet, 180);
+        showToast('状态已切换为：' + statusMap[status].text);
+    }
+
+    function updateStatusUI() {
+        const s = statusMap[currentStatus];
+
+        document.getElementById('avatarStatusDot').style.background = s.color;
+        document.getElementById('sidebarStatusDot').style.background = s.color;
+
+        document.getElementById('sidebarStatusIcon').innerHTML = iconImg(s.iconKey, s.emoji, 16);
+        document.getElementById('sidebarStatusText').textContent = s.text;
+
+        document.getElementById('scIcon').innerHTML = iconImg(s.iconKey, s.emoji, 26);
+        document.getElementById('scStatusTitle').textContent = '当前状态：' + s.text;
+        document.getElementById('scStatusDesc').textContent = s.desc;
+
+        document.getElementById('profilePopStatus').innerHTML =
+            `<span style="color:${s.color};font-size:14px;">●</span> ${s.text} · 手机在线`;
+    }
+
+    // ==================== 渲染亲密关系 ====================
+    function renderRelations() {
+        const row = document.getElementById('relationRow');
+        row.innerHTML = relations.map(r => `
+            <div class="relation-item" onclick="showToast('查看${r.label}')">
+                ${iconImg(r.key, r.emoji, 14)}
+                ${r.label}
+            </div>
+        `).join('');
+    }
+
+    // ==================== 渲染消息列表 ====================
+    function renderMessages(filterText = '') {
+        const list = document.getElementById('msgList');
+        const filtered = messages.filter(m =>
+            !filterText || m.name.includes(filterText) || m.preview.includes(filterText)
+        );
+
+        if (filtered.length === 0) {
+            list.innerHTML = '<div class="empty-tip">没有找到相关消息</div>';
+            return;
+        }
+
+        list.innerHTML = filtered.map(m => `
+            <div class="msg-item" onclick="openChat(${m.id})" data-id="${m.id}">
+                <div class="msg-avatar ${m.avatarClass}">${m.avatar}</div>
+                <div class="msg-content">
+                    <div class="msg-top">
+                        <span class="msg-name">${m.name}${m.online ? '<span class="online-dot"></span>' : ''}</span>
+                        <span class="msg-time">${m.time}</span>
+                    </div>
+                    <div class="msg-preview">${escapeHtml(m.preview)}</div>
+                </div>
+                ${m.unread > 0 ? `<div class="badge" data-badge="${m.id}">${m.unread}</div>` : ''}
+            </div>
+        `).join('');
+    }
+
+    function filterMessages() {
+        const text = document.getElementById('searchInput').value.trim();
+        renderMessages(text);
+    }
+
+    // ==================== 渲染联系人 ====================
+    function renderContacts(filterText = '') {
+        const container = document.getElementById('contactScroll');
+        let html = '';
+
+        contacts.forEach((group) => {
+            const filteredMembers = group.members.filter(m =>
+                !filterText || m.name.includes(filterText)
+            );
+            if (filteredMembers.length === 0) return;
+
+            const isCollapsed = collapsedGroups[group.group] && !filterText;
+            const maxH = isCollapsed ? 0 : filteredMembers.length * 58;
+
+            html += `
+                <div class="contact-group">
+                    <div class="group-header ${isCollapsed ? 'collapsed' : ''}" onclick="toggleGroup('${group.group}')">
+                        <span class="group-left">
+                            ${iconImg(group.iconKey, group.emoji, 16)}
+                            ${group.group} (${filteredMembers.length})
+                        </span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="group-members" style="max-height:${maxH}px">
+                        ${filteredMembers.map(m => `
+                            <div class="member-item" onclick="showToast('查看 ${m.name} 的资料卡')">
+                                <div class="member-avatar ${m.avatarClass}">${m.avatar}</div>
+                                <div class="member-info">
+                                    <div class="member-name">${m.name}</div>
+                                    <div class="member-sign">${m.sign}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        });
+
+        if (!html) html = '<div class="empty-tip">没有找到相关联系人</div>';
+        container.innerHTML = html;
+    }
+
+    function toggleGroup(name) {
+        collapsedGroups[name] = !collapsedGroups[name];
+        renderContacts();
+    }
+
+    function filterContacts(text) {
+        renderContacts(text.trim());
+    }
+
+    // ==================== 渲染动态 ====================
+    function renderDynamics() {
+        const feed = document.getElementById('dynamicFeed');
+        feed.innerHTML = dynamics.map((d, i) => `
+            <div class="post-card">
+                <div class="post-head">
+                    <div class="post-avatar ${d.avatarClass}">${d.avatar}</div>
+                    <div>
+                        <div class="post-user">${d.user}</div>
+                        <div class="post-time">${d.time}</div>
+                    </div>
+                </div>
+                <div class="post-text">${escapeHtml(d.text)}</div>
+                ${d.image ? `<div class="post-image">${d.image}</div>` : ''}
+                <div class="post-actions">
+                    <span class="post-action ${d.liked ? 'liked' : ''}" onclick="toggleLike(${i}, this)">
+                        ${iconImg('like', d.liked ? '❤️' : '🤍', 14)} ${d.likes}
+                    </span>
+                    <span class="post-action" onclick="showToast('评论功能开发中')">
+                        ${iconImg('comment', '💬', 14)} ${d.comments}
+                    </span>
+                    <span class="post-action" onclick="showToast('已转发')">
+                        ${iconImg('share', '↗️', 14)} 转发
+                    </span>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function toggleLike(index) {
+        const d = dynamics[index];
+        d.liked = !d.liked;
+        d.likes += d.liked ? 1 : -1;
+        renderDynamics();
+    }
+
+    function switchDynTab(el) {
+        document.querySelectorAll('.dyn-tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        if (!el.textContent.includes('好友动态')) {
+            showToast('该频道内容开发中，先看看好友动态吧');
+        }
+    }
+
+    // ==================== 渲染侧边栏网格 ====================
+    function renderSidebarGrid() {
+        const grid = document.getElementById('sidebarGrid');
+        grid.innerHTML = sidebarGridItems.map(item => `
+            <div class="sg-item" onclick="showToast('${item.toast}')">
+                ${iconImg(item.key, item.emoji, 26)}
+                ${item.label}
+            </div>
+        `).join('');
+    }
+
+    // ==================== 渲染底部导航 ====================
+    function renderBottomNav() {
+        const nav = document.getElementById('bottomNav');
+        const items = [
+            { tab: 'msg', iconKey: 'navMsg', emoji: '💬', label: '消息', badge: true },
+            { tab: 'contact', iconKey: 'navContact', emoji: '👥', label: '联系人', badge: false },
+            { tab: 'dynamic', iconKey: 'navDynamic', emoji: '🌐', label: '动态', badge: false }
+        ];
+
+        nav.innerHTML = items.map(item => `
+            <div class="nav-item ${currentTab === item.tab ? 'active' : ''}" data-tab="${item.tab}" onclick="switchTab('${item.tab}')">
+                <span class="nav-icon">
+                    <span class="nav-badge-wrap">
+                        ${iconImg(item.iconKey, item.emoji, 24)}
+                        ${item.badge ? `<span class="nav-badge" id="navMsgBadge">3</span>` : ''}
+                    </span>
+                </span>
+                <span>${item.label}</span>
+            </div>
+        `).join('');
+    }
+
+    // ==================== Tab 切换 ====================
+    function switchTab(tab) {
+        currentTab = tab;
+        if (sidebarOpen) closeSidebar();
+
+        document.querySelectorAll('.page-msg, .page-contact, .page-dynamic').forEach(p => {
+            p.classList.remove('active');
+        });
+        document.getElementById('pageChat').classList.remove('active');
+
+        const pageMap = { msg: 'pageMsg', contact: 'pageContact', dynamic: 'pageDynamic' };
+        document.getElementById(pageMap[tab]).classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelector(`.nav-item[data-tab="${tab}"]`).classList.add('active');
+
+        const titleMap = { msg: '消息', contact: '联系人', dynamic: '动态' };
+        document.getElementById('topTitle').textContent = titleMap[tab];
+
+        const backBtn = document.querySelector('.top-title .back-btn');
+        if (backBtn) backBtn.style.display = 'none';
+    }
+
+    // ==================== 聊天页 ====================
+    function openChat(id) {
+        currentChatId = id;
+        const msg = messages.find(m => m.id === id);
+        if (!msg) return;
+
+        if (msg.unread > 0) {
+            msg.unread = 0;
+            updateNavBadge();
+        }
+
+        const topTitle = document.getElementById('topTitle');
+        topTitle.innerHTML = `<span class="back-btn" onclick="closeChat()">‹</span> ${msg.name}`;
+
+        document.querySelectorAll('.page-msg, .page-contact, .page-dynamic').forEach(p => p.classList.remove('active'));
+        document.getElementById('pageChat').classList.add('active');
+
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+        renderChatHistory(id);
+        setTimeout(() => document.getElementById('chatInput').focus(), 300);
+    }
+
+    function closeChat() {
+        currentChatId = null;
+        switchTab(currentTab);
+    }
+
+    function renderChatHistory(id) {
+        const body = document.getElementById('chatBody');
+        const history = chatHistories[id] || [];
+        const msg = messages.find(m => m.id === id);
+
+        body.innerHTML = history.map(item => {
+            if (item.self) {
+                return `
+                    <div class="chat-msg self">
+                        <div class="chat-avatar" style="background:#5b8def;">我</div>
+                        <div class="chat-bubble">${renderBubbleContent(item)}</div>
+                    </div>
+                `;
+            } else {
+                const avatarClass = msg ? msg.avatarClass : 'a1';
+                const avatarText = msg ? msg.avatar : '?';
+                return `
+                    <div class="chat-msg">
+                        <div class="chat-avatar ${avatarClass}">${avatarText}</div>
+                        <div class="chat-bubble">${renderBubbleContent(item)}</div>
+                    </div>
+                `;
+            }
+        }).join('');
+
+        body.scrollTop = body.scrollHeight;
+    }
+
+    function renderBubbleContent(item) {
+        if (item.emoji) {
+            return `<span class="super-emoji">${item.emoji}</span>`;
+        }
+        if (item.voice) {
+            return `
+                <div class="voice-msg">
+                    <div class="voice-play" onclick="playVoice(this)">▶</div>
+                    <div class="voice-wave">
+                        <div class="voice-bar"></div><div class="voice-bar"></div>
+                        <div class="voice-bar"></div><div class="voice-bar"></div>
+                        <div class="voice-bar"></div><div class="voice-bar"></div>
+                    </div>
+                    <span class="voice-duration">${item.voice}"</span>
+                </div>
+            `;
+        }
+        return escapeHtml(item.text || '');
+    }
+
+    function playVoice(el) {
+        const wave = el.parentElement.querySelector('.voice-wave');
+        if (el.classList.contains('playing')) {
+            el.classList.remove('playing');
+            el.textContent = '▶';
+            wave.classList.remove('playing');
+            return;
+        }
+        el.classList.add('playing');
+        el.textContent = '❚❚';
+        wave.classList.add('playing');
+        setTimeout(() => {
+            el.classList.remove('playing');
+            el.textContent = '▶';
+            wave.classList.remove('playing');
+        }, 2000);
+    }
+
+    function sendMessage() {
+        if (!currentChatId) return;
+        const input = document.getElementById('chatInput');
+        const text = input.value.trim();
+        if (!text) return;
+
+        if (!chatHistories[currentChatId]) chatHistories[currentChatId] = [];
+        chatHistories[currentChatId].push({ self: true, text: text });
+
+        const msg = messages.find(m => m.id === currentChatId);
+        if (msg) {
+            msg.preview = text;
+            msg.time = '刚刚';
+            renderMessages(document.getElementById('searchInput').value.trim());
+        }
+
+        renderChatHistory(currentChatId);
+        input.value = '';
+        simulateReply(currentChatId);
+    }
+
+    function sendSuperEmoji() {
+        if (!currentChatId) return;
+        const emojis = ['😀', '🎉', '🔥', '👍', '😂', '❤️', '🐧'];
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+        if (!chatHistories[currentChatId]) chatHistories[currentChatId] = [];
+        chatHistories[currentChatId].push({ self: true, emoji: emoji });
+
+        const msg = messages.find(m => m.id === currentChatId);
+        if (msg) {
+            msg.preview = '[超级表情] ' + emoji;
+            msg.time = '刚刚';
+            renderMessages(document.getElementById('searchInput').value.trim());
+        }
+
+        renderChatHistory(currentChatId);
+    }
+
+    function simulateReply(chatId) {
+        const replies = [
+            '哈哈，好的', '收到', '666', '来了来了', '嗯嗯',
+            '稍等，马上', '真的假的', '可以的', '👍', '晚点聊'
+        ];
+        const msg = messages.find(m => m.id === chatId);
+        if (!msg) return;
+
+        setTimeout(() => {
+            if (currentChatId !== chatId) return;
+
+            const reply = replies[Math.floor(Math.random() * replies.length)];
+            if (!chatHistories[chatId]) chatHistories[chatId] = [];
+            chatHistories[chatId].push({ self: false, text: reply });
+
+            msg.preview = reply;
+            msg.time = '刚刚';
+            renderMessages(document.getElementById('searchInput').value.trim());
+
+            if (currentChatId === chatId) {
+                renderChatHistory(chatId);
+            }
+
+            if (currentChatId !== chatId) {
+                msg.unread = (msg.unread || 0) + 1;
+                updateNavBadge();
+            }
+        }, 1200 + Math.random() * 800);
+    }
+
+    // ==================== 导航 badge ====================
+    function updateNavBadge() {
+        const totalUnread = messages.reduce((sum, m) => sum + (m.unread || 0), 0);
+        const badge = document.getElementById('navMsgBadge');
+        if (!badge) return;
+        if (totalUnread > 0) {
+            badge.textContent = totalUnread > 99 ? '99+' : totalUnread;
+            badge.classList.remove('hide');
+        } else {
+            badge.classList.add('hide');
+        }
+        renderMessages(document.getElementById('searchInput').value.trim());
+    }
+
+    // ==================== 头像弹层 ====================
+    function toggleProfile() {
+        if (sidebarOpen) return;
+        const pop = document.getElementById('profilePop');
+        pop.classList.toggle('show');
+    }
+
+    document.addEventListener('click', function(e) {
+        const pop = document.getElementById('profilePop');
+        if (pop.classList.contains('show') &&
+            !pop.contains(e.target) &&
+            !e.target.closest('.avatar') &&
+            !e.target.closest('.status-sheet')) {
+            pop.classList.remove('show');
+        }
+    });
+
+    // ==================== Toast ====================
+    let toastTimer = null;
+    function showToast(text) {
+        let toast = document.getElementById('globalToast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'globalToast';
+            toast.style.cssText = `
+                position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(10px);
+                background: rgba(0,0,0,0.75); color: #fff; padding: 10px 20px; border-radius: 20px;
+                font-size: 13px; z-index: 9999; opacity: 0; transition: all 0.25s; pointer-events: none;
+                max-width: 80%; text-align: center; backdrop-filter: blur(6px);
+            `;
+            document.body.appendChild(toast);
+        }
+        toast.textContent = text;
+        requestAnimationFrame(() => {
+            toast.style.opacity = '1';
+            toast.style.transform = 'translateX(-50%) translateY(0)';
+        });
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => {
+            toast.style.opacity = '0';
+            toast.style.transform = 'translateX(-50%) translateY(10px)';
+        }, 1800);
+    }
+
+    // ==================== 工具函数 ====================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>"]/g, function(c) {
+            return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+        });
+    }
+
+    // ==================== 启动 ====================
+    init();
+    bindSidebarGesture();
+
+    document.getElementById('chatBody').addEventListener('click', function() {
+        this.scrollTop = this.scrollHeight;
+    });
+</script>
+
+</body>
+</html>

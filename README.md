@@ -66,6 +66,15 @@ https://raw.githubusercontent.com/Huiling-Furry/tim-icons/main/<路径>
 https://cdn.jsdelivr.net/gh/Huiling-Furry/tim-icons@v1.0.0/tim_icons.zip
 ```
 
+## 示例页面（Demo）
+
+| 项目 | 说明 |
+| --- | --- |
+| 文件 | `qq8-impression.html` |
+| 标题 | QQ 8 · 印象（界面印象稿） |
+| 在线预览 | <https://huiling-furry.github.io/tim-icons/qq8-impression.html> |
+| 说明 | 静态 Demo，图片通过本仓库 CDN 加载；当前所有图标占位均指向同一路径 `r/aa/a.png`，仅作布局 / 风格参考 |
+
 ## 注意事项
 
 - 文件名经过混淆，无可读语义；如需定位某个图标，建议按尺寸 / 用途比对。
