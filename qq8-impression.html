@@ -1292,43 +1292,43 @@
     // 基础地址：https://cdn.jsdelivr.net/gh/Huiling-Furry/tim-icons@main/r/{桶}/{文件}.png
     const CDN_BASE = 'https://cdn.jsdelivr.net/gh/Huiling-Furry/tim-icons@main/r';
 
-    // 根据你的仓库字母分桶规则手动映射（样例 r/aa/a.png 已确认可访问）
-    // 后面你把准确路径发我，只改这里即可
+    // 已接入 tim-icons 仓库中的真实图标（TIM 4.1.0.4050 提取）
+    // 路径相对 CDN_BASE（已含 /r），如 b/qui_search.png -> .../r/b/qui_search.png
     const ICONS = {
-        avatar:        `${CDN_BASE}/aa/a.png`,        // 用户头像（样例路径）
-        search:        `${CDN_BASE}/aa/a.png`,        // 搜索
-        add:           `${CDN_BASE}/aa/a.png`,        // 添加
-        emoji:         `${CDN_BASE}/aa/a.png`,        // 表情
-        navMsg:        `${CDN_BASE}/aa/a.png`,        // 消息
-        navContact:    `${CDN_BASE}/aa/a.png`,        // 联系人
-        navDynamic:    `${CDN_BASE}/aa/a.png`,        // 动态
-        statusOnline:  `${CDN_BASE}/aa/a.png`,        // 在线
-        statusQme:     `${CDN_BASE}/aa/a.png`,        // Q我吧
-        statusBusy:    `${CDN_BASE}/aa/a.png`,        // 忙碌
-        statusHidden:  `${CDN_BASE}/aa/a.png`,        // 隐身
-        relationKing:  `${CDN_BASE}/aa/a.png`,        // 王者搭子
-        relationFire:  `${CDN_BASE}/aa/a.png`,        // 闺蜜
-        relationHeart: `${CDN_BASE}/aa/a.png`,        // 情侣
-        relationHand:  `${CDN_BASE}/aa/a.png`,        // 兄弟
-        like:          `${CDN_BASE}/aa/a.png`,        // 点赞
-        comment:       `${CDN_BASE}/aa/a.png`,        // 评论
-        share:         `${CDN_BASE}/aa/a.png`,        // 转发
-        groupFamily:   `${CDN_BASE}/aa/a.png`,        // 家人分组
-        groupFire:     `${CDN_BASE}/aa/a.png`,        // 死党分组
-        groupHeart:    `${CDN_BASE}/aa/a.png`,        // 暗恋分组
-        groupBook:     `${CDN_BASE}/aa/a.png`,        // 同学分组
-        groupGame:     `${CDN_BASE}/aa/a.png`,        // 游戏分组
-        gridSpace:     `${CDN_BASE}/aa/a.png`,        // 空间
-        gridMail:      `${CDN_BASE}/aa/a.png`,        // 邮箱
-        gridWallet:    `${CDN_BASE}/aa/a.png`,        // 钱包
-        gridStar:      `${CDN_BASE}/aa/a.png`,        // 收藏
-        gridFile:      `${CDN_BASE}/aa/a.png`,        // 文件
-        gridGame:      `${CDN_BASE}/aa/a.png`,        // 游戏
-        gridMusic:     `${CDN_BASE}/aa/a.png`,        // 音乐
-        gridSetting:   `${CDN_BASE}/aa/a.png`,        // 设置
-        video1:        `${CDN_BASE}/aa/a.png`,
-        video2:        `${CDN_BASE}/aa/a.png`,
-        video3:        `${CDN_BASE}/aa/a.png`
+        avatar:        `${CDN_BASE}/b/qui_avatar.png`,                    // 头像 · qui_avatar
+        search:        `${CDN_BASE}/b/qui_search.png`,                    // 搜索 · qui_search
+        add:           `${CDN_BASE}/b/qui_add.png`,                       // 添加 · qui_add
+        emoji:         `${CDN_BASE}/b/qui_emoticon.png`,                  // 表情 · qui_emoticon
+        navMsg:        `${CDN_BASE}/b/qui_nav_btm_message_nor.webp`,      // 消息 · qui_nav_btm_message_nor
+        navContact:    `${CDN_BASE}/b/qui_nav_btm_contact_nor.webp`,      // 联系人 · qui_nav_btm_contact_nor
+        navDynamic:    `${CDN_BASE}/b/qui_nav_btm_channel_nor.webp`,      // 动态 · qui_nav_btm_channel_nor（近似）
+        statusOnline:  `${CDN_BASE}/b/qui_visible.webp`,                  // 在线 · qui_visible（近似）
+        statusQme:     `${CDN_BASE}/b/qui_message_alert.webp`,            // Q我吧 · qui_message_alert（近似）
+        statusBusy:    `${CDN_BASE}/k/qui_zzzzzz.webp`,                   // 忙碌 · qui_zzzzzz（近似）
+        statusHidden:  `${CDN_BASE}/b/qui_hide_state.webp`,               // 隐身 · qui_hide_state
+        relationKing:  `${CDN_BASE}/b/qui_matching_mate.png`,             // 王者搭子 · qui_matching_mate（近似）
+        relationFire:  `${CDN_BASE}/b/qui_sister_filled_qzone.webp`,      // 闺蜜 · qui_sister_filled_qzone
+        relationHeart: `${CDN_BASE}/b/qui_heart_filled.webp`,             // 情侣 · qui_heart_filled
+        relationHand:  `${CDN_BASE}/b/qui_brother_filled_qzone.webp`,     // 兄弟 · qui_brother_filled_qzone
+        like:          `${CDN_BASE}/b/qui_like.webp`,                     // 点赞 · qui_like
+        comment:       `${CDN_BASE}/b/qui_comment.webp`,                  // 评论 · qui_comment
+        share:         `${CDN_BASE}/b/qui_share.png`,                     // 转发 · qui_share
+        groupFamily:   `${CDN_BASE}/b/qui_tui_friends.webp`,              // 家人分组 · qui_tui_friends（近似）
+        groupFire:     `${CDN_BASE}/k/hot_reactive_gray_intimate_jiyou_svip_1_icon.png`, // 死党分组 · 亲密关系图标（近似）
+        groupHeart:    `${CDN_BASE}/b/qui_heart_filled.webp`,             // 暗恋分组 · qui_heart_filled（近似）
+        groupBook:     `${CDN_BASE}/b/qui_tui_classmate.webp`,            // 同学分组 · qui_tui_classmate
+        groupGame:     `${CDN_BASE}/b/qui_game.webp`,                     // 游戏分组 · qui_game
+        gridSpace:     `${CDN_BASE}/b/qui_qq_zone.webp`,                  // 空间 · qui_qq_zone
+        gridMail:      `${CDN_BASE}/b/qui_mail.webp`,                     // 邮箱 · qui_mail
+        gridWallet:    `${CDN_BASE}/b/qui_wallet.webp`,                   // 钱包 · qui_wallet
+        gridStar:      `${CDN_BASE}/b/qui_star.png`,                      // 收藏 · qui_star
+        gridFile:      `${CDN_BASE}/b/qui_files.png`,                     // 文件 · qui_files
+        gridGame:      `${CDN_BASE}/b/qui_game.webp`,                     // 游戏 · qui_game
+        gridMusic:     `${CDN_BASE}/b/qui_music.webp`,                    // 音乐 · qui_music
+        gridSetting:   `${CDN_BASE}/b/qui_setting.png`,                   // 设置 · qui_setting
+        video1:        `${CDN_BASE}/b/qui_play_circle.png`,               // 视频缩略图 · qui_play_circle
+        video2:        `${CDN_BASE}/b/qui_game.webp`,                     // 视频缩略图 · qui_game
+        video3:        `${CDN_BASE}/b/qui_image.webp`                     // 视频缩略图 · qui_image
     };
 
     // 生成 <img> 图标，加载失败时回退为 emoji
